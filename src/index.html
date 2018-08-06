@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Log</title>
+  <link rel="stylesheet" href="css/font/inter-ui.css">
+  <link rel="stylesheet" href="css/macian.min.css">
+  <script src="js/drop.js"></script>
+  <script src="js/log.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/options.js"></script>
+  <script src="js/console.js"></script>
+  <script src="js/vis.js"></script>
+  <script src="js/time.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/journal.js"></script>
+  <!-- <script src="js/test.js"></script> -->
+</head>
+<body class="hf">
+
+  <div id="ui" class="noselect r p5 hf cn c-d"></div>
+
+  <script>
+    const {dialog, app} = require('electron').remote;
+    const fs = require('fs');
+    const Store = require('./js/store.js');
+    const Lexicon = require('./js/lexicon.js');
+    const path = require('path');
+
+    let dataPath = '';
+
+    if (localStorage.hasOwnProperty('logDataPath')) {
+      console.log('Data path found');
+      dataPath = localStorage.getItem('logDataPath');
+    } else {
+      console.error('No data path found. Reverting to default data location');
+      dataPath = `${app.getPath('appData')}/log-data.json`;
+      localStorage.setItem('logDataPath', dataPath);
+    }
+
+    const dataStore = new Store({
+      path: dataPath,
+      defaults: {
+        locale: 'en',
+        config: {
+          ui: {
+            bg: '#f8f8f8',
+            colour: '#202020',
+            accent: '#eb4e32',
+            colourMode: 'sector',
+            font: 'sans-serif',
+            view: 28,
+            tableView: 50,
+            stat: 'decimal'
+          },
+          system: {
+            calendar: 'gregorian',
+            timeFormat: '24'
+          }
+        },
+        palette: {},
+        projectPalette: {},
+        log: []
+      }
+    });
+
+    Log.path = dataStore.path;
+
+    const Dict = new Lexicon({
+      path: `${__dirname}/lexicon/en.json`
+    });
+
+    Log.init();
+  </script>
+</body>
+</html>
